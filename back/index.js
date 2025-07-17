@@ -21,7 +21,7 @@ const DB_TYPE = process.env.DB_TYPE || 'sqlite';
 
 // Configurações globais do sistema, incluindo porta, dados do banco e segredo JWT
 const CONFIG = {
-  PORTA: process.env.PORTA || 3000,
+  PORTA: process.env.PORTA || 1200,
   // As configurações abaixo só são usadas se DB_TYPE for 'mysql'
   BANCO_DE_DADOS: {
     host: process.env.DB_HOST || 'localhost',
@@ -35,11 +35,22 @@ const CONFIG = {
 
 const app = express(); // Inicializa a aplicação Express
 
+// Configuração específica para o seu frontend
+const corsOptions = {
+  origin: 'http://172.17.3.125:8000', // Agora aceita apenas requisições desse endereço
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+};
+
+// Habilita CORS com as opções definidas acima
+app.use(cors(corsOptions));
+
+// Permite que o Express faça o parsing de JSON no corpo das requisições
+app.use(express.json());
+
 // Middlewares globais
-app.use(cors()); // Habilita CORS para todas as rotas
-app.use(bodyParser.json()); // Permite receber JSON no body
 app.use(bodyParser.urlencoded({ extended: true })); // Permite receber urlencoded
-app.use(express.static(path.join(__dirname, 'public'))); // Serve arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, '../public'))); // Serve arquivos estáticos da pasta 'public'
 
 // Middleware de autenticação JWT para proteger rotas (não utilizado em todas as rotas)
 const autenticarToken = (req, res, next) => {
@@ -512,12 +523,6 @@ async function inicializarBancoDeDados() {
   }
 }
 
-// Rota GET / para teste de conexão e integração com o frontend
-// Apenas retorna mensagem simples para indicar que o backend está rodando
-app.get('/', (req, res) => {
-  res.send('Backend rodando! Rota raiz disponível para integração com o frontend.');
-});
-
 // ROTA DE POPULAÇÃO DE DADOS DE TESTE (apenas para ambiente local)
 // Esta rota insere médicos, recepcionistas e pacientes de exemplo no banco de dados para facilitar testes.
 // Só pode ser acessada a partir de 127.0.0.1
@@ -603,8 +608,8 @@ migrarTabelaPacientesAdicionarDataCriacao();
 
 // Inicialização do servidor
 // Sobe o servidor na porta configurada, inicializa o banco e agenda limpeza periódica de chamadas antigas
-app.listen(CONFIG.PORTA, async () => {
-  console.log(`Servidor rodando na porta ${CONFIG.PORTA}`);
+app.listen(CONFIG.PORTA, '172.17.3.125', async () => {
+  console.log(`Servidor rodando em http://172.17.3.125:${CONFIG.PORTA}`);
   await inicializarBancoDeDados();
   // Limpeza periódica das chamadas antigas
   setInterval(async () => {
