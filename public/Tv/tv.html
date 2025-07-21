@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel TV - IBR Hospital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+
+        body {
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f5ff, #e8f0ff);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+
+        .info-chamada {
+            background: linear-gradient(to bottom right, #ffffff, #f8faff);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 285px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(230, 236, 255, 0.8);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .chamada-header {
+            background: linear-gradient(135deg, #1a237e, #303f9f);
+            color: white;
+            padding: 18px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 15px rgba(26, 35, 126, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chamada-header::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+        }
+
+        .chamada-header h2 {
+            color: white;
+            margin: 0;
+            font-size: clamp(18px, 3vw, 28px);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        #chamadaAtual {
+            background: linear-gradient(to bottom, #f8f9fa, #eef1f8);
+            flex-grow: 1;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(18px, 3vw, 36px);
+            text-align: center;
+            padding: 20px;
+            border: 1px solid rgba(230, 236, 255, 0.8);
+            box-shadow: inset 0 2px 15px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #chamadaAtual::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #e53935, #d32f2f);
+            z-index: 1;
+        }
+
+        #chamadaAtual .sala {
+            font-size: clamp(28px, 5vw, 56px);
+            color: #e53935;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(229, 57, 53, 0.15);
+            display: inline-block;
+            padding: 0 15px;
+        }
+
+        #chamadaAtual .medico {
+            color: #1a237e;
+            font-weight: 600;
+            font-size: clamp(22px, 4vw, 42px);
+            margin-bottom: 15px;
+        }
+
+        #chamadaAtual .paciente {
+            color: white;
+            font-size: clamp(18px, 3.5vw, 38px);
+            margin: 15px 0 30px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #3949ab, #1a237e);
+            border-radius: 50px;
+            box-shadow: 0 6px 20px rgba(26, 35, 126, 0.25);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            animation: highlight 1.5s infinite alternate;
+            position: relative;
+            z-index: 2;
+            max-width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @keyframes highlight {
+            from {
+                box-shadow: 0 6px 20px rgba(26, 35, 126, 0.25);
+            }
+            to {
+                box-shadow: 0 10px 25px rgba(26, 35, 126, 0.5);
+            }
+        }
+
+        #chamadaAtual .horario {
+            font-size: clamp(20px, 3.5vw, 40px);
+            color: #424242;
+            font-weight: 600;
+            margin-top: 35px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 30px;
+            border-radius: 50px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid rgba(230, 236, 255, 0.8);
+        }
+
+        .youtube-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 285px);
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            padding: 0;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .marquee {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #1a237e, #283593);
+            color: white;
+            height: 30px;
+            overflow: hidden;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+
+        .marquee-content {
+            display: flex;
+            width: fit-content;
+            animation: scroll 30s linear infinite;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .marquee-item {
+            white-space: nowrap;
+            margin-right: 100px;
+            font-size: clamp(14px, 2vw, 20px);
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .marquee-item::before {
+            content: "♦";
+            margin-right: 15px;
+            color: #90caf9;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .youtube-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #displayChamada {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.97), rgba(40, 53, 147, 0.97));
+            color: white;
+            padding: clamp(20px, 4vw, 50px);
+            border-radius: 20px;
+            font-size: clamp(24px, 4vw, 48px);
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.4);
+            animation: aparecer 0.5s ease-out;
+            width: 90%;
+            max-width: 800px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #displayChamada.ativo {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        #displayChamada .sala {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        
+        #displayChamada .medico {
+            font-size: clamp(24px, 4vw, 46px);
+            color: #90caf9;
+            font-weight: 600;
+        }
+        
+        #displayChamada .paciente {
+            font-size: clamp(28px, 5vw, 56px);
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        .historico-container {
+            grid-column: 1 / -1;
+            background: linear-gradient(to bottom right, #ffffff, #f8faff);
+            border-radius: 20px;
+            padding: 10px;
+            height: min(200px, 25vh);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(230, 236, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .historico-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1a237e, #303f9f);
+            z-index: 1;
+        }
+
+        .historico-titulo {
+            color: #1a237e;
+            font-size: clamp(14px, 2vw, 18px);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .historico-titulo::before {
+            content: "◆";
+            margin-right: 10px;
+            color: #e53935;
+            font-size: 14px;
+        }
+
+        #historico {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .historico-item {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            padding: 5px;
+            border-radius: 15px;
+            width: calc(25% - 15px);
+            text-align: center;
+            font-size: clamp(14px, 2vw, 22px);
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.2);
+            animation: slideIn 0.5s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .historico-item::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+        }
+        
+        .historico-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(26, 35, 126, 0.3);
+        }
+
+        .historico-item .sala {
+            font-size: clamp(18px, 3vw, 32px);
+            color: #fff;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .historico-item .medico {
+            font-size: clamp(12px, 2vw, 20px);
+            color: #90caf9;
+            margin-bottom: 10px;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .historico-item .paciente {
+            font-size: clamp(10px, 1.8vw, 18px);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 6px 10px;
+            border-radius: 10px;
+            margin-top: 5px;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Adiciona pulso na chamada atual quando ativa */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(57, 73, 171, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(57, 73, 171, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(57, 73, 171, 0);
+            }
+        }
+        
+        .status-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+        
+        .waiting-animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .waiting-dot {
+            width: 12px;
+            height: 12px;
+            margin: 0 8px;
+            background-color: #1a237e;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: dotPulse 1.4s infinite ease-in-out;
+        }
+        
+        .waiting-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .waiting-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .waiting-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(0.7);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Media queries para diferentes tamanhos de tela */
+        @media screen and (max-width: 1200px) {
+            .historico-item {
+                width: calc(50% - 15px);
+            }
+        }
+       
+
+        
+
+        @media screen and (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 15px;
+            }
+
+            .info-chamada, .youtube-container {
+                height: auto;
+                min-height: 300px;
+            }
+
+            .youtube-container {
+                aspect-ratio: 16/9;
+                min-height: 200px;
+            }
+
+            .historico-container {
+                height: auto;
+                min-height: 200px;
+                max-height: 30vh;
+                overflow-y: auto;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                height: auto;
+                gap: 10px;
+            }
+
+            .historico-item {
+                width: 100%;
+            }
+
+            .chamada-header {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            #chamadaAtual {
+                padding: 15px;
+            }
+
+            #chamadaAtual .paciente {
+                padding: 10px 20px;
+                margin: 10px 0 20px;
+            }
+
+            #chamadaAtual .horario {
+                margin-top: 20px;
+                padding: 8px 20px;
+            }
+
+            .marquee {
+                height: 40px;
+            }
+        }
+
+        /* Adaptação específica para TVs grandes */
+        @media screen and (min-width: 1920px) {
+            body {
+                padding: 30px;
+            }
+
+            .container {
+                gap: 30px;
+            }
+
+            .chamada-header {
+                padding: 25px;
+            }
+
+            #chamadaAtual .sala {
+                font-size: 68px;
+            }
+
+            #chamadaAtual .medico {
+                font-size: 52px;
+            }
+
+            #chamadaAtual .paciente {
+                font-size: 48px;
+                padding: 18px 40px;
+            }
+
+            #chamadaAtual .horario {
+                font-size: 48px;
+            }
+
+            .historico-item .sala {
+                font-size: 38px;
+            }
+
+            .historico-item .medico {
+                font-size: 24px;
+            }
+
+            .historico-item .paciente {
+                font-size: 22px;
+            }
+
+            .marquee {
+                height: 70px;
+            }
+
+            .marquee-item {
+                font-size: 28px;
+            }
+        }
+
+        .marquee{
+                position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #1a237e, #283593);
+            color: white;
+            height: 40px;
+            overflow: hidden;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Informações da chamada (lado esquerdo superior) -->
+        <div class="info-chamada">
+            <div class="chamada-header">
+                <h2>Próxima Chamada</h2>
+                <div class="status-icon"></div>
+            </div>
+            <div id="chamadaAtual">
+                <div class="sala"></div>
+                <div class="medico"></div>
+                <div class="paciente"></div>
+                <div class="horario"></div>
+            </div>
+        </div>
+
+        <!-- Container do YouTube (lado direito superior) -->
+        <div class="youtube-container">
+            <iframe 
+                src="https://www.youtube.com/embed/LLpNUqHVam8?autoplay=1&mute=1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- Histórico de chamadas (parte inferior) -->
+        <div class="historico-container">
+            <div class="historico-titulo">Chamadas Anteriores</div>
+            <div id="historico"></div>
+        </div>
+    </div>
+
+    <!-- Display de chamada (aparece no centro quando ativo) -->
+    <div id="displayChamada"></div>
+
+    <div class="marquee">
+        <div class="marquee-content">
+            <span class="marquee-item">IBR HOSPITAL - CUIDANDO DA SUA SAÚDE</span>
+            <span class="marquee-item">EXCELÊNCIA NO ATENDIMENTO</span>
+            <span class="marquee-item">PROFISSIONAIS QUALIFICADOS</span>
+            <span class="marquee-item">TECNOLOGIA DE PONTA</span>
+        </div>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+
+        // --- Buscar chamadas do backend apenas ao carregar a página ---
+        function buscarChamadasBackend() {
+            fetch('http://172.17.3.138:3000/chamadas')
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.chamadas && data.chamadas.length > 0) {
+                        const chamadas = data.chamadas;
+                        // Exibe a última chamada como atual
+                        realizarChamada(chamadas[0]);
+                        // Exibe as 4 anteriores como histórico
+                        const historicoDiv = document.getElementById('historico');
+                        historicoDiv.innerHTML = '';
+                        chamadas.slice(1).forEach(chamada => {
+                            const historicoItem = document.createElement('div');
+                            historicoItem.className = 'historico-item';
+                            historicoItem.innerHTML = `
+                                <div class="sala">Sala ${chamada.sala}</div>
+                                <div class="medico">Dr(a). ${chamada.medico}</div>
+                                <div class="paciente">${chamada.paciente}</div>
+                            `;
+                            historicoDiv.appendChild(historicoItem);
+                        });
+                    } else {
+                        // Estado inicial quando não há chamada
+                        document.getElementById('chamadaAtual').innerHTML = `
+                            <div style="font-size: clamp(18px, 3vw, 36px); color: #666; margin-bottom: 20px;">Aguardando próxima chamada</div>
+                            <div class="waiting-animation">
+                                <div class="waiting-dot"></div>
+                                <div class="waiting-dot"></div>
+                                <div class="waiting-dot"></div>
+                            </div>
+                            <div class="horario">${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+                        `;
+                        document.getElementById('historico').innerHTML = '';
+                    }
+                });
+        }
+        // Chama ao carregar a página
+        buscarChamadasBackend();
+
+        // Ajustar layout com base no tamanho da tela
+        function ajustarLayout() {
+            const alturaViewport = window.innerHeight;
+            const container = document.querySelector('.container');
+            const historico = document.querySelector('.historico-container');
+            const chamadaInfo = document.querySelector('.info-chamada');
+            const youtube = document.querySelector('.youtube-container');
+            
+            // Ajustar altura do histórico baseado na altura da tela
+            const alturaHistorico = Math.min(200, alturaViewport * 0.25);
+            historico.style.height = `${alturaHistorico}px`;
+            
+            // Ajustar altura das seções principais baseado na altura da tela e do histórico
+            const alturaSecoes = alturaViewport - alturaHistorico - 90; // 90px para margens e marquee
+            chamadaInfo.style.height = `${alturaSecoes}px`;
+            youtube.style.height = `${alturaSecoes}px`;
+            
+            // Em telas pequenas, reorganizar para layout de coluna
+            if (window.innerWidth <= 900) {
+                container.style.gridTemplateColumns = '1fr';
+                container.style.gridTemplateRows = 'auto auto auto';
+                chamadaInfo.style.height = 'auto';
+                chamadaInfo.style.minHeight = '300px';
+                youtube.style.height = 'auto';
+            } else {
+                container.style.gridTemplateColumns = '1fr 1fr';
+                container.style.gridTemplateRows = 'auto 1fr';
+            }
+        }
+
+        // Monitorar mudanças no localStorage
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'ultimaChamada') {
+                const chamada = JSON.parse(e.newValue);
+                if (chamada) {
+                    realizarChamada(chamada);
+                }
+            }
+        });
+
+        // Chamar a função de ajuste de layout quando a página carrega e quando a janela é redimensionada
+        window.addEventListener('load', ajustarLayout);
+        window.addEventListener('resize', ajustarLayout);
+
+        // Controle de repetição de chamada de voz
+        let ultimaChamadaFalada = '';
+        let timeoutFala = null;
+
+        function realizarChamada(chamada) {
+            // Atualizar informações da chamada atual
+            const chamadaAtual = document.getElementById('chamadaAtual');
+            chamadaAtual.innerHTML = `
+                <div class="sala">Sala ${chamada.sala}</div>
+                <div class="medico">Dr(a). ${chamada.medico}</div>
+                <div class="paciente">${chamada.paciente}</div>
+                <div class="horario">${chamada.horario}</div>
+            `;
+
+            // Atualizar cabeçalho
+            document.querySelector('.chamada-header h2').innerText = 'Chamada Atual';
+
+            // Mostrar alerta central
+            const displayChamada = document.getElementById('displayChamada');
+            displayChamada.innerHTML = `
+                <div class="sala">Sala ${chamada.sala}</div>
+                <div class="medico">Dr(a). ${chamada.medico}</div>
+                <div class="paciente">${chamada.paciente}</div>
+            `;
+
+            displayChamada.classList.add('ativo');
+            setTimeout(() => {
+                displayChamada.classList.remove('ativo');
+            }, 7000);
+
+            // Adicionar ao histórico
+            const historicoDiv = document.getElementById('historico');
+            const historicoItem = document.createElement('div');
+            historicoItem.className = 'historico-item';
+            historicoItem.innerHTML = `
+                <div class="sala">Sala ${chamada.sala}</div>
+                <div class="medico">Dr(a). ${chamada.medico}</div>
+                <div class="paciente">${chamada.paciente}</div>
+            `;
+            historicoDiv.insertBefore(historicoItem, historicoDiv.firstChild);
+
+            // Limitar histórico a 4 itens
+            while (historicoDiv.children.length > 4) {
+                historicoDiv.removeChild(historicoDiv.lastChild);
+            }
+
+            // Verificar se o histórico está transbordando e ajustar layout se necessário
+            ajustarLayout();
+
+            // Sintetizar voz: falar apenas duas vezes por chamada nova
+            const idChamada = `${chamada.paciente}|${chamada.sala}|${chamada.medico}|${chamada.horario}`;
+            if (ultimaChamadaFalada !== idChamada) {
+                ultimaChamadaFalada = idChamada;
+                let repeticoes = 0;
+                function falarChamada() {
+                    if (repeticoes < 2) {
+                        const mensagem = new SpeechSynthesisUtterance(
+                            `Paciente ${chamada.paciente}, favor dirigir-se à sala ${chamada.sala}, com Doutor ${chamada.medico}`
+                        );
+                        mensagem.lang = 'pt-BR';
+                        mensagem.rate = 0.9;
+                        mensagem.onend = () => {
+                            repeticoes++;
+                            if (repeticoes < 2) {
+                                timeoutFala = setTimeout(falarChamada, 1000);
+                            }
+                        };
+                        synth.speak(mensagem);
+                    }
+                }
+                if (timeoutFala) clearTimeout(timeoutFala);
+                falarChamada();
+            }
+        }
+
+        // Verificar se há chamada pendente ao carregar
+        const ultimaChamada = localStorage.getItem('ultimaChamada');
+        if (ultimaChamada) {
+            realizarChamada(JSON.parse(ultimaChamada));
+        } else {
+            // Estado inicial quando não há chamada
+            document.getElementById('chamadaAtual').innerHTML = `
+                <div style="font-size: clamp(18px, 3vw, 36px); color: #666; margin-bottom: 20px;">Aguardando próxima chamada</div>
+                <div class="waiting-animation">
+                    <div class="waiting-dot"></div>
+                    <div class="waiting-dot"></div>
+                    <div class="waiting-dot"></div>
+                </div>
+                <div class="horario">${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+            `;
+            
+            // Atualizar relógio a cada minuto
+            setInterval(() => {
+                const horaAtual = document.querySelector('#chamadaAtual .horario');
+                if (horaAtual) {
+                    horaAtual.textContent = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                }
+            }, 60000);
+        }
+
+        // --- NOVO: Polling para recarregar a página da TV quando houver nova chamada ---
+        document.addEventListener('DOMContentLoaded', function() {
+            let ultimaChamadaId = null;
+            function checarNovaChamada() {
+                fetch('http://172.17.3.138:3000/chamadas?_=' + Date.now())
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && data.chamadas && data.chamadas.length > 0) {
+                            const chamadaAtual = data.chamadas[0];
+                            if (ultimaChamadaId !== null && chamadaAtual.id !== ultimaChamadaId) {
+                                window.location.reload();
+                            }
+                            ultimaChamadaId = chamadaAtual.id;
+                        }
+                    });
+            }
+            // Inicializa o valor ao carregar
+            fetch('http://172.17.3.138:3000/chamadas?_=' + Date.now())
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.chamadas && data.chamadas.length > 0) {
+                        ultimaChamadaId = data.chamadas[0].id;
+                    }
+                    // Só começa o polling depois de inicializar
+                    setInterval(checarNovaChamada, 2000);
+                });
+        });
+    </script>
+</body>
+</html>

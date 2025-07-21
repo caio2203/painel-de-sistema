@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel de Recepção</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --danger-color: #ef4444;
+            --background-color: #f8fafc;
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--background-color);
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            max-width: 420px;
+            width: 90%;
+            background: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-circle {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            background: var(--primary-light);
+            border-radius: 50%;
+        }
+
+        .login-logo i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .login-title {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            padding-left: 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f9fafb;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background-color: white;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1.2rem;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            display: none;
+            background-color: #fee2e2;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-logo">
+            <div class="logo-circle">
+                <i class="fas fa-user-tie"></i>
+            </div>
+        </div>
+        <h1 class="login-title">Acesso ao Painel de Recepção</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Nome de Usuário</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" required placeholder="Digite seu nome de usuário">
+                </div>
+            </div>
+           
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Entrar
+            </button>
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i> Nome de usuário incorreto. Por favor, tente novamente.
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Função para esconder mensagem de erro ao digitar
+        document.getElementById('username').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+
+        // Função para gerar um ID de sessão único
+        function gerarIdSessao() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Login consultando o backend
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const button = this.querySelector('button');
+            button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Entrando...';
+            button.disabled = true;
+
+            // Faz requisição para o backend (ajuste a URL se necessário)
+            try {
+                const response = await fetch('http://172.17.3.138:3000/login-recepcao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario: username })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    // Salva sessão do recepcionista logado (pode usar sessionStorage/localStorage)
+                    const sessaoId = gerarIdSessao();
+                    const session = {
+                        sessaoId: sessaoId,
+                        recepId: data.usuario.id,
+                        nome: data.usuario.nome,
+                        usuario: data.usuario.usuario,
+                        token: data.token
+                    };
+                    sessionStorage.setItem('sessaoRecepAtualId', sessaoId);
+                    localStorage.setItem(`sessaoRecep_${sessaoId}`, JSON.stringify(session));
+                    // Redireciona para o painel de recepção
+                    window.location.href = 'recepcao.html';
+                } else {
+                    // Usuário não encontrado
+                    document.getElementById('errorMessage').style.display = 'block';
+                    button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+                    button.disabled = false;
+                }
+            } catch (err) {
+                // Erro de conexão ou backend
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = 'Erro ao conectar ao servidor. Tente novamente.';
+                button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
